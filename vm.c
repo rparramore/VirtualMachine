@@ -1,9 +1,10 @@
-//Team Name: Compiler Builder 26
-//Stephen Ulmer
-//Rebecca parramore
-//Brandon Royal
-//Ryan Beasley
-//Bryan Hart
+//
+//  main.c
+//  vm
+//
+//  Created by Stephen Ulmer on 9/8/16.
+//  Copyright © 2016 Stephen Ulmer. All rights reserved.
+//
 
 #include <stdio.h>
 
@@ -13,34 +14,51 @@
 
 
 
-struct {
+typedef struct {
     int op;   // opcode
     int  l;   // L
     int  m;   // M
-} instruction;
+} Instruction;
+
+int sp; //stack pointer
+int bp; //base pointer
+int pc; //program counter
+struct Instruction ir;
 
 
 int main(int argc, const char * argv[]) {
     
-    int sp = 0; //stack pointer
-    int bp = 1; //base pointer
-    int pc = 0; //program counter
-    int ir = 0; //instruction register
+    sp = 0;
+    bp = 1;
+    pc = 0;
+    ir = 0;
     
-    int[] stack = new int[MAX_STACK_HEIGHT];
+    
+    int[] stack = new int[MAX_STACK_HEIGHT]; // the stack used in the program
     
     int isNotHalted = 1; //boolean for while loop
     
     
+    
+    
+    //print PL/0 code
+    
+    
     while(isNotHalted){
+        
+        //print machine state
         
         pc = pc + 1;
         
         //fetch instruction
             //get operation
+                //currentInstruction.op = read(file)
+                //currentInstruction.l = read(file)
+                //currentInstruction.m = read(file)
         
         
         //execute instruction
+            //pass struct instruction
         
     }
         
