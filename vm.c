@@ -29,6 +29,112 @@ int isNotHalted;//
 //
 int stack[MAX_STACK_HEIGHT];// the stack used in the program
 
+void LIT(struct Instruction instruct);
+void OPR(struct Instruction instruct);
+void LOD(struct Instruction instruct);
+void STO(struct Instruction instruct);
+void CAL(struct Instruction instruct);
+void INC(struct Instruction instruct);
+void JMP(struct Instruction instruct);
+void JPC(struct Instruction instruct);
+void SIO(struct Instruction instruct);
+
+//uses opcode to call the function of the corresponding operation
+void chooseOp(struct Instruction instruct){
+    
+    int operation = instruct.op;
+    
+    //switch statement for operations
+    
+    switch(operation){
+        case 1:
+            LIT(instruct);
+            break;
+            
+        case 2:
+            OPR(instruct);
+            break;
+            
+        case 3:
+            LOD(instruct);
+            break;
+            
+        case 4:
+            STO(instruct);
+            break;
+            
+        case 5:
+            CAL(instruct);
+            break;
+            
+        case 6:
+            INC(instruct);
+            break;
+            
+        case 7:
+            JMP(instruct);
+            break;
+            
+        case 8:
+            JPC(instruct);
+            break;
+            
+        case 9:
+            SIO(instruct);
+            break;
+            
+            
+    }
+}
+
+//01 LIT function
+void LIT(struct Instruction instruct){
+    sp = sp + 1;
+    stack[sp] = instruct.m;
+}
+
+//02 OPR function
+void OPR(struct Instruction instruct){
+    
+}
+
+//03 LOD function
+void LOD(struct Instruction instruct){
+    
+}
+
+//04 STO function
+void STO(struct Instruction instruct){
+    
+}
+
+//05 CAL function
+void CAL(struct Instruction instruct){
+    
+}
+
+//06 INC function
+void INC(struct Instruction instruct){
+    
+}
+
+//07 JMP function
+void JMP(struct Instruction instruct){
+    
+}
+
+//08 JPC function
+void JPC(struct Instruction instruct){
+    
+}
+
+//09 SIO function
+void SIO(struct Instruction instruct){
+    
+}
+
+
+
 
 int main(int argc, const char * argv[]) {
     
@@ -55,9 +161,9 @@ int main(int argc, const char * argv[]) {
         
         //fetch instruction
             //get operation
-                //ir.op = read(file)
-                //ir.l = read(file)
-                //ir.m = read(file)
+                //ir.op = read(file) OPCODE
+                //ir.l = read(file)  LEVEL
+                //ir.m = read(file)  MODIFIER
         
         
         //execute instruction
