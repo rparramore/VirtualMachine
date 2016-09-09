@@ -1,29 +1,33 @@
 //
-//  main.c
-//  vm
-//
-//  Created by Stephen Ulmer on 9/8/16.
-//  Copyright © 2016 Stephen Ulmer. All rights reserved.
-//
+//Team Name: Compiler Builder 26
+//Stephen Ulmer
+//Brandon Royal
+//Rebecca Parramore
+//Ryan Beasley
+//Bryan Hart
 
 #include <stdio.h>
 
-#define MAX_STACK_HEIGHT = 2000;
-#define MAX_CODE_LENGTH = 500;
-#define MAX_LEXI_LEVELS = 3;
+#define MAX_STACK_HEIGHT  2000
+#define MAX_CODE_LENGTH  500
+#define MAX_LEXI_LEVELS  3
 
 
 
-typedef struct {
+struct Instruction {
     int op;   // opcode
     int  l;   // L
     int  m;   // M
-} Instruction;
+};
 
 int sp; //stack pointer
 int bp; //base pointer
 int pc; //program counter
 struct Instruction ir;
+
+int isNotHalted;//
+//
+int stack[MAX_STACK_HEIGHT];// the stack used in the program
 
 
 int main(int argc, const char * argv[]) {
@@ -31,12 +35,11 @@ int main(int argc, const char * argv[]) {
     sp = 0;
     bp = 1;
     pc = 0;
-    ir = 0;
+    ir.op = 0;
+    ir.l = 0;
+    ir.m = 0;
     
-    
-    int[] stack = new int[MAX_STACK_HEIGHT]; // the stack used in the program
-    
-    int isNotHalted = 1; //boolean for while loop
+    isNotHalted = 1; //boolean for while loop
     
     
     
@@ -52,9 +55,9 @@ int main(int argc, const char * argv[]) {
         
         //fetch instruction
             //get operation
-                //currentInstruction.op = read(file)
-                //currentInstruction.l = read(file)
-                //currentInstruction.m = read(file)
+                //ir.op = read(file)
+                //ir.l = read(file)
+                //ir.m = read(file)
         
         
         //execute instruction
