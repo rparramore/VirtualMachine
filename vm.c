@@ -186,7 +186,7 @@ int main(int argc, const char * argv[]) {
     
     while(isNotHalted){
         
-        //print machine state
+        // To do Becca: print machine state
         
         pc = pc + 1;
         
