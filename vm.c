@@ -104,6 +104,7 @@ void LIT(struct Instruction instruct){
 
 //02 OPR function
 void OPR(struct Instruction instruct){
+    //TODO Stephen
     //many logic and arithmetic functions here
 }
 
@@ -150,7 +151,7 @@ void JPC(struct Instruction instruct){
 
 //09 SIO function
 void SIO(struct Instruction instruct){
-    
+    //TODO Stephen
 }
 
 //base helper function
