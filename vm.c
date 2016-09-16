@@ -24,7 +24,6 @@ int sp; //stack pointer
 int bp; //base pointer
 int pc; //program counter
 
-
 int isNotHalted;//
 //
 int stack[MAX_STACK_HEIGHT];// the stack used in the program
@@ -41,6 +40,17 @@ void JMP(struct Instruction instruct);
 void JPC(struct Instruction instruct);
 void SIO(struct Instruction instruct);
 
+//prints each instruction in format - by Ryan Beasley
+void printLine(struct Instruction line, int i);
+void printLIT(struct Instruction line, char m[2]);
+void printOPR(struct Instruction line);
+void printLOD(struct Instruction line, char l[2], char m[2]);
+void printSTO(struct Instruction line, char l[2], char m[2]);
+void printCAL(struct Instruction line, char l[2], char m[2]);
+void printINC(struct Instruction line, char m[2]);
+void printJMP(struct Instruction line, char m[2]);
+void printJPC(struct Instruction line, char m[2]);
+void printSIO(struct Instruction line);
 
 //helper function for calculating location of base L levels back
 int base(int level, int b);
@@ -162,8 +172,156 @@ int base(int level, int b){
     return b;
 }
 
+// Generic printline command that prints the appropriate format for the output of the program. - Ryan Beasley
 
+void printLine(struct Instruction line, int i){
+	char stri[4];
+	char strl[2];
+	char strm[2];
+	
+	snprintf(stri, 4, "%d", i);
+	snprintf(strl, 2, "%d", line.l);
+	snprintf(strm, 2, "%d", line.m);
 
+	printf("%2s", stri);
+
+	switch(line.op){
+		case 1:
+			printLIT(line, strm);
+			break;
+		case 2:
+			printOPR(line);
+			break;
+		case 3:
+			printLOD(line, strl, strm);
+			break;
+		case 4:
+			printSTO(line, strl, strm);
+			break;
+		case 5:
+			printCAL(line, strl, strm);
+			break;
+		case 6:
+			printINC(line, strm);
+			break;
+		case 7:
+			printJMP(line, strm);
+			break;
+		case 8:
+			printJPC(line, strm);
+			break;
+		case 9:
+			printSIO(line);
+			break;
+	}
+}
+
+//Ryan Beasley
+
+void printLIT(struct Instruction line, char m[2]){
+	printf(" LIT%10s", m);
+}
+
+//Ryan Beasley
+
+void printOPR(struct Instruction line){
+	switch(line.m){
+		case 0:
+			printf(" RET");
+			break;
+		case 1:
+			printf(" NEG");
+			break;
+		case 2:
+			printf(" ADD");
+			break;
+		case 3:
+			printf(" SUB");
+			break;
+		case 4:
+			printf(" MUL");
+			break;
+		case 5:
+			printf(" DIV");
+			break;
+		case 6:
+			printf(" ODD");
+			break;
+		case 7:
+			printf(" MOD");
+			break;
+		case 8:
+			printf(" EQL");
+			break;
+		case 9:
+			printf(" NEQ");
+			break;
+		case 10:
+			printf(" LSS");
+			break;
+		case 11:
+			printf(" LEQ");
+			break;
+		case 12:
+			printf(" GTR");
+			break;
+		case 13:
+			printf(" GEQ");
+			break;
+	}
+}
+
+//Ryan Beasley
+
+void printLOD(struct Instruction line, char l[2], char m[2]){
+	printf(" LOD%5s%5s", l, m);
+}
+
+//Ryan Beasley
+
+void printSTO(struct Instruction line, char l[2], char m[2]){
+	printf(" STO%5s%5s", l, m);
+}
+
+//Ryan Beasley
+
+void printCAL(struct Instruction line, char l[2], char m[2]){
+	printf(" CAL%5s%5s", l, m);
+}
+
+//Ryan Beasley
+
+void printINC(struct Instruction line, char m[2]){
+	printf(" INC%10s", m);
+}
+
+//Ryan Beasley
+
+void printJMP(struct Instruction line, char m[2]){
+	printf(" JMP%10s", m);
+}
+
+//Ryan Beasley
+
+void printJPC(struct Instruction line, char m[2]){
+	printf(" JPC%10s", m);
+}
+
+//Ryan Beasley
+
+void printSIO(struct Instruction line){
+	switch(line.m){
+		case 0:
+			printf(" OUT");
+			break;
+		case 1:
+			printf(" INP");
+			break;
+		case 2:
+			printf(" HLT");
+			break;
+	}
+}
 
 int main(int argc, const char * argv[]) {
     sp = 0;
@@ -178,11 +336,20 @@ int main(int argc, const char * argv[]) {
     
     isNotHalted = 1; //boolean for while loop
     
+    struct Instruction code[MAX_CODE_LENGTH];
     
-    
-    
-    //print PL/0 code
-    
+    //Scans in data from stdin into code[] since we're pipelining our input file and then
+    //prints it out in the appropriate format - Ryan Beasley
+    int i = 0;
+	printf("PL/0 code:\n\n");
+	while(1){
+		scanf("%d %d %d", &code[i].op, &code[i].l, &code[i].m);
+		printLine(code[i], i);
+		printf("\n");
+		if (code[i].op == 9 && code[i].l == 0 && code[i].m == 2)
+			break;
+		i++;
+	}
     
     while(isNotHalted){
         
