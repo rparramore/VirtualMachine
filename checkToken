@@ -1,0 +1,124 @@
+// Rebecca Parramore's Part
+char tokenNames[33] = {"nulsym", "identsym", "numbersym", "plussym", "minussym",
+"multsym", "slashsym", "oddsym", "eqsym", "neqsym", "lessym", "leqsym",
+"gtrsym", "geqsym", "lparentsym", "rparentsym", "commasym", "semicolonsym",
+"periodsym", "becomessym", "beginsym", "endsym", "ifsym", "thensym",
+"whilesym", "dosym", "callsym", "constsym", "varsym", "procsym", "writesym",
+"readsym", "elsesym"};
+
+
+struct tokenType {
+	char tokenName;
+	int tokenNum;
+}tokenType;
+
+
+struct tokenType* initializeTokens(char tokenNames[33])
+{
+	int i;
+	struct tokenType tokens[33];
+	for (i = 1; i <= tokenNames.length(); i++)
+	{
+		tokens[i].tokenName = tokenNames[i];
+		tokens[i].tokenNum = i;
+	}
+
+	return tokens;
+}
+
+struct tokenType* checkToken(char* inputTokens, char currentToken)
+{
+	struct tokenType finalInputTokens[inputTokens.size()];
+
+
+	int i;
+	for (i = 0; i < inputTokens.length(); i++) 
+	{
+		switch('currentToken')
+		{
+			case '+':
+				finalInputTokens[i].tokenName = '+';
+				finalInputTokens[i].tokenNum = 4;
+				break;
+			case '-':
+				finalInputTokens[i].tokenName = '-';
+				finalInputTokens[i].tokenNum = 5;
+				break;
+			case '*':
+				finalInputTokens[i].tokenName = '*';
+				finalInputTokens[i].tokenNum = '6';
+				break;
+			case '/':
+				finalInputTokens[i].tokenName = '/';
+				finalInputTokens[i].tokenNum = '7';
+				break;
+			case '=':
+				finalInputTokens[i].tokenName = '=';
+				finalInputTokens[i].tokenNum = '9';
+				break;
+			case '==':
+				finalInputTokens[i].tokenName = '==';
+				finalInputTokens[i].tokenNum = '9';
+				break;
+			case '!=':
+				finalInputTokens[i].tokenName = '!=';
+				finalInputTokens[i].tokenNum = '10';
+				break;
+			case '<':
+				finalInputTokens[i].tokenName = '<';
+				finalInputTokens[i].tokenNum = '11';
+				break;
+			case '<=':
+				finalInputTokens[i].tokenName = '<=';
+				finalInputTokens[i].tokenNum = '12';
+				break;
+			case '>':
+				finalInputTokens[i].tokenName = '>';
+				finalInputTokens[i].tokenNum = '13';
+				break;
+			case '>=':
+				finalInputTokens[i].tokenName = '>=';
+				finalInputTokens[i].tokenNum = '14';
+				break;
+			case ',':
+				finalInputTokens[i].tokenName = ',';
+				finalInputTokens[i].tokenNum = '17';
+				break;
+			case ';':
+				finalInputTokens[i].tokenName = ';';
+				finalInputTokens[i].tokenNum = '18';
+				break;
+			case '.':
+				finalInputTokens[i].tokenName = '.';
+				finalInputTokens[i].tokenNum = '19';
+				break;
+			case 'if':
+				finalInputTokens[i].tokenName = 'if';
+				finalInputTokens[i].tokenNum = '23';
+				break;
+			case 'then':
+				finalInputTokens[i].tokenName = 'then';
+				finalInputTokens[i].tokenNum = '24';
+				break;
+			case 'while':
+				finalInputTokens[i].tokenName = 'while';
+				finalInputTokens[i].tokenNum = '25';
+				break;
+			case 'else':
+				finalInputTokens[i].tokenName = 'else';
+				finalInputTokens[i].tokenNum = '33';
+				break;
+			default:
+				break;
+		}
+
+		// Call function that checks unique ones
+		return finalInputTokens;
+	}
+	
+}
+
+	/*nulsym = 1, identsym = 2, numbersym = 3,  oddsym = 8,
+	lparentsym = 15, rparentsym = 16, 
+	becomessym = 20, beginsym = 21, endsym = 22, ifsym = 23,  dosym = 26, callsym = 27, 
+	constsym = 28, varsym = 29, procsym = 30, writesym = 31, readsym = 32, elsesym = 33*/
