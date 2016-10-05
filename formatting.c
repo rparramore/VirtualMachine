@@ -15,7 +15,7 @@ void printNoComm(char** code){
 void printTokens(struct* token){
     printf("tokens:\n-------\n");
     int numTokens= sizeof(token)/sizeof(token[0]);
-    for (int i=0; i<numTokens; i++) // TODO edit parameter length
+    for (int i=0; i<numTokens; i++) // TODO edit parameter names??
         printf("%-13s%d",token.value,token.tokenNum);
 
 }
