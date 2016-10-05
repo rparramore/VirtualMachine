@@ -1,0 +1,14 @@
+printCode(char** code){
+  int size = getArraySize(char** code);
+  for (int i = 0; i < size; i++){
+  
+    printf("%s", char[i]);
+  }
+}
+
+printTokens(struct* bleh){
+  for (size of arrray of structs)
+  print:
+  bleh.val
+  bleh.tokenNum
+}
