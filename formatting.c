@@ -1,24 +1,21 @@
 #include <stdio.h>
 
-main()
-{
+void printSCode(char** code){
     printf("source code:\n------------\n");
-    char origText, nonComm;
-    while(!EOF)
-    {
-        // TODO printer with comments
-    }
+    int size = sizeof(code)/sizeof(code[0]);
+    for(int i=0; i<size; i++)
+        printf("%s", char[i]);
+}
+void printNoComm(char** code){
     printf("source code without comments:\n-----------------------------\n");
-
-    {
-        // TODO place holder for print code without comments
-    }
-
+    int size = sizeof(code)/sizeof(code[0]);
+    for(int i=0; i<size; i++)
+        printf("%s", char[i]);
+}
+void printTokens(struct* token){
     printf("tokens:\n-------\n");
-    /*char token[]="var";
-    int tokenVal = 29;
-    int numTokens=1;*/
-    for (int i=0;i<numTokens;i++) // TODO edit parameter length
-        printf("%-13s%d",token,tokenVal);
+    int numTokens= sizeof(token)/sizeof(token[0]);
+    for (int i=0; i<numTokens; i++) // TODO edit parameter length
+        printf("%-13s%d",token.value,token.tokenNum);
 
 }
