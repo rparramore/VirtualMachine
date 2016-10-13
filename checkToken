@@ -1,5 +1,10 @@
-// Rebecca Parramore's Part
-char tokenNames[33] = {"nulsym", "identsym", "numbersym", "plussym", "minussym",
+// Rebecca Parramore's part
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+
+char* tokenNames[] = {"nulsym", "identsym", "numbersym", "plussym", "minussym",
 "multsym", "slashsym", "oddsym", "eqsym", "neqsym", "lessym", "leqsym",
 "gtrsym", "geqsym", "lparentsym", "rparentsym", "commasym", "semicolonsym",
 "periodsym", "becomessym", "beginsym", "endsym", "ifsym", "thensym",
@@ -26,7 +31,7 @@ struct tokenType* initializeTokens(char tokenNames[33])
 	return tokens;
 }
 
-struct tokenType* checkToken(char* inputTokens, char currentToken)
+struct tokenType* checkToken(char** inputTokens, char currentToken)
 {
 	struct tokenType finalInputTokens[inputTokens.size()];
 
@@ -34,7 +39,7 @@ struct tokenType* checkToken(char* inputTokens, char currentToken)
 	int i;
 	for (i = 0; i < inputTokens.length(); i++) 
 	{
-		switch('currentToken')
+		switch(inputTokens[i])
 		{
 			case '+':
 				finalInputTokens[i].tokenName = '+';
@@ -46,76 +51,124 @@ struct tokenType* checkToken(char* inputTokens, char currentToken)
 				break;
 			case '*':
 				finalInputTokens[i].tokenName = '*';
-				finalInputTokens[i].tokenNum = '6';
+				finalInputTokens[i].tokenNum = 6;
 				break;
 			case '/':
 				finalInputTokens[i].tokenName = '/';
-				finalInputTokens[i].tokenNum = '7';
+				finalInputTokens[i].tokenNum = 7;
 				break;
 			case '=':
 				finalInputTokens[i].tokenName = '=';
-				finalInputTokens[i].tokenNum = '9';
-				break;
-			case '==':
-				finalInputTokens[i].tokenName = '==';
-				finalInputTokens[i].tokenNum = '9';
-				break;
-			case '!=':
-				finalInputTokens[i].tokenName = '!=';
-				finalInputTokens[i].tokenNum = '10';
+				finalInputTokens[i].tokenNum = 9;
 				break;
 			case '<':
 				finalInputTokens[i].tokenName = '<';
-				finalInputTokens[i].tokenNum = '11';
-				break;
-			case '<=':
-				finalInputTokens[i].tokenName = '<=';
-				finalInputTokens[i].tokenNum = '12';
+				finalInputTokens[i].tokenNum = 11;
 				break;
 			case '>':
 				finalInputTokens[i].tokenName = '>';
-				finalInputTokens[i].tokenNum = '13';
-				break;
-			case '>=':
-				finalInputTokens[i].tokenName = '>=';
-				finalInputTokens[i].tokenNum = '14';
+				finalInputTokens[i].tokenNum = 13;
 				break;
 			case ',':
 				finalInputTokens[i].tokenName = ',';
-				finalInputTokens[i].tokenNum = '17';
+				finalInputTokens[i].tokenNum = 17;
 				break;
 			case ';':
 				finalInputTokens[i].tokenName = ';';
-				finalInputTokens[i].tokenNum = '18';
+				finalInputTokens[i].tokenNum = 18;
 				break;
 			case '.':
 				finalInputTokens[i].tokenName = '.';
-				finalInputTokens[i].tokenNum = '19';
+				finalInputTokens[i].tokenNum = 19;
 				break;
-			case 'if':
-				finalInputTokens[i].tokenName = 'if';
-				finalInputTokens[i].tokenNum = '23';
-				break;
-			case 'then':
-				finalInputTokens[i].tokenName = 'then';
-				finalInputTokens[i].tokenNum = '24';
-				break;
-			case 'while':
-				finalInputTokens[i].tokenName = 'while';
-				finalInputTokens[i].tokenNum = '25';
-				break;
-			case 'else':
-				finalInputTokens[i].tokenName = 'else';
-				finalInputTokens[i].tokenNum = '33';
+			case '(':
+				finalInputTokens[i].tokenName = "(";
+				finalInputTokens[i].tokenNum = 15;
+			case ')':
+				finalInputTokens[i].tokenName = ")";
+				finalInputTokens[i].tokenNum = 16;
 				break;
 			default:
 				break;
 		}
 
-		// Call function that checks unique ones
-		return finalInputTokens;
+		if (strcmp(inputTokens[i], ":=") == 0){
+			finalInputTokens[i].tokenName = ":=";
+			finalInputTokens[i].tokenNum = 20;
+		}
+		else if (strcmp(inputTokens[i], "<>") == 0){
+			finalInputTokens[i].tokenName = "<>";
+			finalInputTokens[i].tokenNum = '10';
+		}
+		
+		else if(strcmp(inputTokens[i], "<=") == 0){
+			finalInputTokens[i].tokenName = "<=";
+			finalInputTokens[i].tokenNum = 12;
+		}
+		else if(strcmp(inputTokens[i], ">=") == 0){
+			finalInputTokens[i].tokenName = ">=";
+			finalInputTokens[i].tokenNum = 14;
+		}
+
+		else if(strcmp(inputTokens[i], "if") == 0){
+			finalInputTokens[i].tokenName = "if";
+			finalInputTokens[i].tokenNum = 23;
+		}
+		else if(strcmp(inputTokens[i], "then") == 0){
+			finalInputTokens[i].tokenName = "then";
+			finalInputTokens[i].tokenNum = 24;
+		}
+		else if(strcmp(inputTokens[i], "while") == 0){
+			finalInputTokens[i].tokenName = "while";
+			finalInputTokens[i].tokenNum = 25;
+		}
+		else if(strcmp(inputTokens[i], "else") == 0){
+			finalInputTokens[i].tokenName = "else";
+			finalInputTokens[i].tokenNum = 33;
+		}
+		else if(strcmp(inputTokens[i], "null") == 0){
+			finalInputTokens[i].tokenName = "null";
+			finalInputTokens[i].tokenNum = 1;
+		}
+		else if(strcmp(inputTokens[i], "begin") == 0){
+			finalInputTokens[i].tokenName = "begin";
+			finalInputTokens[i].tokenNum = 21;
+		}
+		else if(strcmp(inputTokens[i], "end") == 0){
+			finalInputTokens[i].tokenName = "end";
+			finalInputTokens[i].tokenNum = 22;
+		}
+		else if(strcmp(inputTokens[i], "do") == 0){
+			finalInputTokens[i].tokenName = "do";
+			finalInputTokens[i].tokenNum = 26;
+		}
+		else if(strcmp(inputTokens[i], "call") == 0){
+			finalInputTokens[i].tokenName = "call";
+			finalInputTokens[i].tokenNum = 27;
+		}
+		else if(strcmp(inputTokens[i], "const") == 0){
+			finalInputTokens[i].tokenName = "const";
+			finalInputTokens[i].tokenNum = 28;
+		}
+		else if(strcmp(inputTokens[i], "write") == 0){
+			finalInputTokens[i].tokenName = "write";
+			finalInputTokens[i].tokenNum = 31;
+		}
+		else if(strcmp(inputTokens[i], "read") == 0){
+			finalInputTokens[i].tokenName = "read";
+			finalInputTokens[i].tokenNum = 32;
+		}
+
 	}
 	
 }
 
-	
+	int getSizeArray(char** array)
+	{
+		int i = 0;
+		while (array[i] != null){
+			i++;
+		}
+
+		return i;
+	}
