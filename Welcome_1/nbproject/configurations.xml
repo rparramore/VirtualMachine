@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="97">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <logicalFolder name="HeaderFiles"
+                   displayName="Header Files"
+                   projectFiles="true">
+      <itemPath>lex.h</itemPath>
+      <itemPath>parser.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="ResourceFiles"
+                   displayName="Resource Files"
+                   projectFiles="true">
+      <itemPath>input.pl0</itemPath>
+      <itemPath>reservedWords.txt</itemPath>
+      <itemPath>tokens.txt</itemPath>
+      <itemPath>tokentypes.txt</itemPath>
+    </logicalFolder>
+    <logicalFolder name="SourceFiles"
+                   displayName="Source Files"
+                   projectFiles="true">
+      <itemPath>compile.c</itemPath>
+      <itemPath>lex.c</itemPath>
+      <itemPath>parser.c</itemPath>
+      <itemPath>vm.c</itemPath>
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false">
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Debug" type="1">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+      </compileType>
+      <item path="compile.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="input.pl0" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="lex.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="lex.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="parser.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="parser.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="reservedWords.txt" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="tokens.txt" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="tokentypes.txt" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="vm.c" ex="false" tool="0" flavor2="0">
+      </item>
+    </conf>
+    <conf name="Release" type="1">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>5</developmentMode>
+        </cTool>
+        <ccTool>
+          <developmentMode>5</developmentMode>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+        </fortranCompilerTool>
+        <asmTool>
+          <developmentMode>5</developmentMode>
+        </asmTool>
+      </compileType>
+      <item path="compile.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="input.pl0" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="lex.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="lex.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="parser.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="parser.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="reservedWords.txt" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="tokens.txt" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="tokentypes.txt" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="vm.c" ex="false" tool="0" flavor2="0">
+      </item>
+    </conf>
+  </confs>
+</configurationDescriptor>

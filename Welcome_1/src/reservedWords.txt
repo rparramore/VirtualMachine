@@ -1,0 +1,14 @@
+const 28
+var 29
+procedure 30
+call 27
+begin 21
+end 22
+if 23
+then 24
+else 33
+while 25
+do 26
+read 32
+write 31
+odd 8
