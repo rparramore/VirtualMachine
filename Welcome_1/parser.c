@@ -118,6 +118,32 @@ Boolean varHelper(){
     }
 }
 
+void ProcedureDec(){
+    if(eat(proceduresym))
+    {
+        
+        if (eat(identsym)){
+            
+            if (eat(semicolonsym))
+            {
+                
+                block();
+                if(!eat(semicolonsym)){
+                    EnqueueError(&code[token], misssemierr);
+
+                }
+            }
+            else
+                EnqueueError(&code[token], misssemierr);
+        }
+        else
+        {
+            EnqueueError(&code[token], varidenterr);
+            return FALSE;
+        }
+    }
+}
+
 void statement(){
     Type dummy = code[token].sym;
     int mem;
