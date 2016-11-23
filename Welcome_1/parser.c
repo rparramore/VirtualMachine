@@ -43,6 +43,7 @@ void program(){
 void block(){
     constDec();
     varDec();
+    procedureDec();
     fprintf(fp, "6 0 %d\r\n", numVars + 4);
     line++;
     statement();
@@ -118,7 +119,7 @@ Boolean varHelper(){
     }
 }
 
-void ProcedureDec(){
+void procedureDec(){
     if(eat(proceduresym))
     {
         
