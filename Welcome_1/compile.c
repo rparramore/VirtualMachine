@@ -5,12 +5,14 @@
 #include "parser.h"
 //comment
 char* getName(char* fileName);
+void printFile(char* fileName);
 
 int main(int argc, char* argv[]){
     lex(argc, argv);
     
-    if(parse(getName(argv[1]))){
+    if(parse()){
         printf("No errors, program is syntactically correct");
+        printFile(getName(argv[1]));
     }
     else{
         PrintErrors(argv[1]);
@@ -33,4 +35,12 @@ char* getName(char* fileName){
     *(temp+i+4) = '\0';
     
     return temp;
+}
+
+void printFile(char* fileName){
+    FILE* fp = fopen(fileName, "w");
+    for (int i = 0; i < address; i++){
+        fprintf(fp, "%d %d %d\r\n", newCode[i].i, newCode[i].l, newCode[i].m);
+    }
+    fclose(fp);
 }

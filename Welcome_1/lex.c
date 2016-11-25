@@ -516,7 +516,7 @@ void PrintErrors(char* fileName){
                 printf("Assignment operator expected.\n");
                 break;
             case idaftercallerr:
-                printf("call must be followed by an identifier.\n");
+                printf("Missing identifier.\n");
                 break;
             case cantcallconstvarerr:
                 printf("Call of a constant or variable is meaningless.\n");
@@ -541,6 +541,9 @@ void PrintErrors(char* fileName){
                 break;
             case expcantbeginwitherr:
                 printf("An expression cannot begin with this symbol.\n");
+                break;
+            case idaftercallprocerr:
+                printf("call must be followed by a procedure identifier.\n");
                 break;
         }
         temp = temp->next;

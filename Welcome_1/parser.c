@@ -8,11 +8,12 @@ int token = 0;
 symbol symbol_table[MAX_SYMBOL_TABLE_SIZE];
 int numSymbols = 0;
 int numVars = 0;
-FILE * fp;
-int line = 0;
+int address;
+int level = -1;
+PL0 newCode[MAX_CODE_LENGTH];
 
-Boolean parse(char* fileName){
-    fp = fopen(fileName, "w");
+Boolean parse(){
+    address = 0;
     program();
     if (front == NULL){
         return TRUE;
@@ -34,32 +35,40 @@ void program(){
     block();
     if(!eat(periodsym))
         EnqueueError(&code[token], perexperr);
-    else{
-        fprintf(fp, "9 0 2\r\n");
-        line++;
-    }
 }
 
-void block(){
+int block(){
+    int space = 4;
+    int prevNumSymbols;
+    int jumpaddr;
+    int proc_addr;
+    level++;
+    prevNumSymbols = numSymbols;
+    
+    jumpaddr = gen(JMP, 0, 0);
+    
     constDec();
-    varDec();
+    varDec(&space);  
     procedureDec();
-    fprintf(fp, "6 0 %d\r\n", numVars + 4);
-    line++;
+    
+    updateM(jumpaddr, address);      
+    proc_addr = gen(INC, 0, space); 
+    
     statement();
+    gen(OPR, 0, RET);
+    
+    numSymbols = prevNumSymbols;
+    level--;
+    return proc_addr;
 }
 
 void constDec(){
     if(eat(constsym)){
-        symbol_table[numSymbols].kind = CONST;
-        if(constHelper()){
-            numSymbols++;
-        }
+        
+        constHelper();
         while(eat(commasym)){
             symbol_table[numSymbols].kind = CONST;
-            if(constHelper()){
-                numSymbols++;
-            }
+            constHelper();
         }
         if(!eat(semicolonsym)){
             EnqueueError(&code[token], misssemierr);
@@ -67,72 +76,72 @@ void constDec(){
     }
 }
 
-Boolean constHelper(){
-    if (!eat(identsym)){
+void constHelper(){
+    char name[MAX_IDENT_SIZE];
+    if (eat(identsym)){
+        strncpy(name, code[token-1].val.s, sizeof(name));
+        if (eat(eqlsym)){            
+            if (eat(numbersym)){                
+                enter(CONST, name, code[token-1].val.d, level, 0);
+                numSymbols++;
+            }
+            else {
+                EnqueueError(&code[token], eqlbynumerr);
+                return FALSE;                
+            }
+        }
+        else{
+            EnqueueError(&code[token], idfolleqlerr);
+            return FALSE;
+        }        
+    }
+    else {        
         EnqueueError(&code[token], varidenterr);
         return FALSE;
     }
-    else {
-        strcpy(symbol_table[numSymbols].name,code[token-1].val.s);
-    }
-    if (!eat(eqlsym)){
-        EnqueueError(&code[token], idfolleqlerr);
-        return FALSE;
-    }
-    if (!eat(numbersym)){
-        EnqueueError(&code[token], eqlbynumerr);
-        return FALSE;
-    }
-    else {
-        symbol_table[numSymbols].val = code[token-1].val.d;
-    }
+    
+    
     return TRUE;
 }
 
-void varDec(){
+void varDec(int* space){
     if (eat(varsym)){    
-        if(varHelper()){
-            numSymbols++;
-            numVars++;
-        }
+        varHelper(space);
         while(eat(commasym)){
-            if(varHelper()){
-                numSymbols++;
-                numVars++;
-            }
+            varHelper(space);
         }
         if(!eat(semicolonsym)){
             EnqueueError(&code[token], misssemierr);
-        }
-    }    
+        }        
+    }       
 }
 
-Boolean varHelper(){
-    if (!eat(identsym)){
-        EnqueueError(&code[token], varidenterr);
-        return FALSE;
+void varHelper(int* space){
+    if (eat(identsym)){
+        enter(VAR, code[token-1].val.s, 0, level, (*space)) //check space pointer later
+        (*space)++;
     }
     else {
-        symbol_table[numSymbols].kind = VAR;
-        strcpy(symbol_table[numSymbols].name,code[token-1].val.s);
-        symbol_table[numSymbols].addr = numSymbols + 4;
+        EnqueueError(&code[token], varidenterr);
     }
 }
 
 void procedureDec(){
-    if(eat(proceduresym))
-    {
-        
+    int proc_addr;
+    char name[MAX_IDENT_SIZE];
+    if(eat(procsym))
+    {        
         if (eat(identsym)){
-            
+            name = strncpy(name, code[token-1].val.s, sizeof(name));
+            enter(PROC, name, 0, level, 666);
             if (eat(semicolonsym))
-            {
-                
-                block();
+            {                
+                proc_addr = block();
+                updateProcAddr(name, proc_addr);
                 if(!eat(semicolonsym)){
                     EnqueueError(&code[token], misssemierr);
-
                 }
+                
             }
             else
                 EnqueueError(&code[token], misssemierr);
@@ -140,7 +149,6 @@ void procedureDec(){
         else
         {
             EnqueueError(&code[token], varidenterr);
-            return FALSE;
         }
     }
 }
@@ -148,9 +156,8 @@ void procedureDec(){
 void statement(){
     Type dummy = code[token].sym;
     int mem;
+    int mem2;
     int i;
-    fpos_t file_pos;
-    fpos_t file_pos2;
     
     switch(dummy){
         case identsym:
@@ -165,9 +172,8 @@ void statement(){
                 }
             }
             expression();
-            if ((i=find(code[mem].val.s)) != -1){
-                fprintf(fp, "4 0 %d\r\n", symbol_table[i].addr);
-                line++;
+            if ((i=find(code[mem].val.s)) != -1 && symbol_table[i].kind != PROC){
+                gen(STO, symbol_table[i].level, symbol_table[i].addr);
             }
             else {
                 EnqueueError(&code[token-1], cantcallconstvarerr);
@@ -192,45 +198,34 @@ void statement(){
         case ifsym:
             token++;                      
             condition();
-            fgetpos(fp, &file_pos);
-            fprintf(fp,"\r\n\r\n\r\n\r\n");
-            line++;
+            mem = gen(JPC, 0, 0);
             if(!eat(thensym)){
                 EnqueueError(&code[token], thenexperr);
             }
             statement();
-            fsetpos(fp, &file_pos);
-            fprintf(fp,"8 0 %d\r\n", line);
-            fseek(fp, 0L, SEEK_END);
+            updateM(mem, address);
             break;
         case whilesym:
             token++;
-            mem = line;
+            mem = address;
             condition();
-            fgetpos(fp, &file_pos);
-            fprintf(fp,"\r\n\r\n\r\n\r\n");
-            line++;
+            mem2 = gen(JPC, 0, 0);
             if(!eat(dosym)){
                 EnqueueError(&code[token], doexperr);
             }
             statement();
-            fprintf(fp, "7 0 %d\r\n", mem);
-            line++;
-            fsetpos(fp, &file_pos);
-            fprintf(fp,"8 0 %d\r\n", line);
-            fseek(fp, 0L, SEEK_END);
+            gen(JMP, 0, mem);
+            updateM(mem2, address);
             break;
         case readsym:
-            fprintf(fp, "9 0 1\r\n");
-            line++;
+            gen(SIO, 0, 1);
             token++;
             if(!eat(identsym)){
                 EnqueueError(&code[token-1], idaftercallerr);
             }
             else {
-                if ((i=find(code[token-1].val.s)) != -1){
-                    fprintf(fp, "4 0 %d\r\n", symbol_table[i].addr);
-                    line++;
+                if ((i=find(code[token-1].val.s)) != -1 && symbol_table[i].kind != PROC){
+                    gen(STO, symbol_table[i].level, symbol_table[i].addr);
                 }
                 else {
                     EnqueueError(&code[token-1], cantcallconstvarerr);
@@ -249,25 +244,36 @@ void statement(){
                 EnqueueError(&code[token], idaftercallerr);
             }
             else {                
-                if ((i=find(code[token-1].val.s)) != -1){
+                if ((i=find(code[token-1].val.s)) != -1 && symbol_table[i].kind != PROC){
                     if (symbol_table[i].kind == VAR){
-                        fprintf(fp, "3 %d %d\r\n", symbol_table[i].level, symbol_table[i].addr);
+                        gen(LOD, symbol_table[i].level, symbol_table[i].addr);
                     }
                     else if (symbol_table[i].kind == CONST){
-                        fprintf(fp, "1 0 %d\r\n", symbol_table[i].val);
+                        gen (LIT, 0, symbol_table[i].val);
                     }
-                    line++;
                 }
                 else {
                     EnqueueError(&code[token-1], cantcallconstvarerr);
                 }
-                fprintf(fp, "9 0 0\r\n");
-                line++;
+                gen(SIO, 0, 0);
                 if(!eat(semicolonsym)){
                     EnqueueError(&code[token], misssemierr);
                 }
                 else {
                     token--;
+                }
+            }
+        case callsym:
+            token++;
+            if (!eat(identsym)){
+                EnqueueError(&code[token], idaftercallerr);
+            }
+            else{
+                if((i=find(code[token-1].val.s)) != -1 && symbol_table[i].kind == PROC){
+                    gen(CAL, symbol_table[i].level, symbol_table[i].addr);
+                }
+                else {
+                    EnqueueError(&code[token-1], idaftercallprocerr);
                 }
             }
             break;
@@ -280,18 +286,19 @@ void condition(){
     int i;
     switch(dummy){
         case oddsym:
-            expression();
-            
+            expression();            
             break;
         default:
             token--;
             expression();
             if((i=isRelOp()) == -1){
                 EnqueueError(&code[token], exprelaterr);
+                expression();
             }
-            expression();
-            fprintf(fp, "2 0 %d\r\n", i);
-            line++;
+            else {
+                expression();
+                gen(OPR, 0, i);
+            }            
             break;
     }
 }
@@ -321,7 +328,6 @@ int isRelOp(){
         default:
             return -1;
     }
-    return FALSE;
 }
 
 void expression(){
@@ -335,13 +341,13 @@ void expression(){
     while(eat(plussym) || eat(minussym)){
         if (code[token-1].sym == plussym){
             term();
-            fprintf(fp, "2 0 2\r\n");
-            line++;
+            gen(OPR, 0, ADD);
+            address++;
         }
         else if (code[token-1].sym == minussym){
             term();
-            fprintf(fp, "2 0 3\r\n");
-            line++;
+            gen(OPR, 0, NEG);
+            address++;
         }
     }
 }
@@ -351,13 +357,11 @@ void term(){
     while(eat(multsym) || eat(slashsym)){
         if (code[token-1].sym == multsym){
             factor();
-            fprintf(fp, "2 0 4\r\n");
-            line++;
+            gen(OPR, 0, MUL);
         }
         else if (code[token-1].sym == slashsym){
             factor();
-            fprintf(fp, "2 0 5\r\n");
-            line++;
+            gen(OPR, 0, DIV);
         }
     }
 }
@@ -367,20 +371,21 @@ void factor(){
         int i;
         if ((i=find(code[token-1].val.s)) != -1){
             if (symbol_table[i].kind == VAR){
-                fprintf(fp, "3 %d %d\r\n", symbol_table[i].level, symbol_table[i].addr);
+                gen(LOD, symbol_table[i].level, symbol_table[i].addr);
             }
             else if (symbol_table[i].kind == CONST){
-                fprintf(fp, "1 0 %d\r\n", symbol_table[i].val);
+                gen(LIT, 0, symbol_table[i].val);
             }
-            line++;
+            else {
+                EnqueueError(&code[token-1], cantcallconstvarerr);
+            }
         }
         else {
             EnqueueError(&code[token-1], cantcallconstvarerr);
         }
     }
     else if(eat(numbersym)){
-        fprintf(fp, "1 0 %d\r\n", code[token-1].val.d);
-        line++;
+        gen(LIT, 0, code[token-1].val.d);
     }
     else if(eat(lparentsym)){
         expression();
@@ -390,12 +395,38 @@ void factor(){
     }
 }
 
+void enter(SymbolType t, char* name, int val, int level, int addr){
+    symbol_table[numSymbols].kind = t;
+    strncpy(symbol_table[numSymbols].name, name, sizeof(name));
+    symbol_table[numSymbols].val = val;
+    symbol_table[numSymbols].addr = addr;
+    numSymbols++;
+}
+
 int find(char* ident){
-    for (int i = 0; i < numSymbols; i++){
+    for (int i = numSymbols-1; i >= 0; i--){
         if (strcmp(symbol_table[i].name,ident) == 0){
             return i;
         }
-    }
-    
+    }    
     return -1;
 }
+
+void updateProcAddr(char* ident, int proc_addr){
+    int i;
+    i = find(ident);
+    symbol_table[i].addr = proc_addr;
+}
+
+int updateM(int addr, int m){
+    newCode[addr].m = m;
+}
+
+int gen(Instruction i, int l, int m){
+    newCode[address].i = i;
+    newCode[address].l = l;
+    newCode[address].m = m;
+    address++;
+    return address-1;
+}
+

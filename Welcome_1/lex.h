@@ -29,7 +29,8 @@ typedef enum{   idstarterr = 1, idlengtherr = 2, invalidtokenerr = 3,
                 assignconstprocerr = 16, assignoperexperr = 17, idaftercallerr = 18,
                 cantcallconstvarerr = 19, thenexperr = 20, semibrackerr = 21, 
                 doexperr = 22, incsymaftstateerr = 23, exprelaterr = 24,
-                missingrparenterr = 25, expcantbeginwitherr = 26} ErrorType;
+                missingrparenterr = 25, expcantbeginwitherr = 26, 
+                idaftercallprocerr = 27} ErrorType;
 
 typedef struct{
     union {
