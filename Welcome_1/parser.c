@@ -15,6 +15,7 @@ PL0 newCode[MAX_CODE_LENGTH];
 Boolean parse(){
     address = 0;
     program();
+    //testParser();
     if (front == NULL){
         return TRUE;
     }
@@ -32,16 +33,17 @@ Boolean eat(Type sym){
 }
 
 void program(){
-    block();
+    blockI();
     if(!eat(periodsym))
         EnqueueError(&code[token], perexperr);
+    gen(SIO, 0, 2);
 }
 
-int block(){
+void blockI(){
     int space = 4;
     int prevNumSymbols;
     int jumpaddr;
-    int proc_addr;
+    
     level++;
     prevNumSymbols = numSymbols;
     
@@ -52,14 +54,41 @@ int block(){
     procedureDec();
     
     updateM(jumpaddr, address);      
-    proc_addr = gen(INC, 0, space); 
+    gen(INC, 0, space); 
     
     statement();
     gen(OPR, 0, RET);
     
+    //testSymbolTable();
+    
     numSymbols = prevNumSymbols;
     level--;
-    return proc_addr;
+}
+
+void block(char* name){
+    int space = 4;
+    int prevNumSymbols;
+    int jumpaddr;
+    
+    level++;
+    prevNumSymbols = numSymbols;
+    
+    jumpaddr = gen(JMP, 0, 0);
+    
+    constDec();
+    varDec(&space);  
+    procedureDec();
+    
+    updateM(jumpaddr, address);      
+    updateProcAddr(name, gen(INC, 0, space));
+    
+    statement();
+    gen(OPR, 0, RET);
+    
+    //testSymbolTable();
+    
+    numSymbols = prevNumSymbols;
+    level--;
 }
 
 void constDec(){
@@ -86,22 +115,16 @@ void constHelper(){
                 numSymbols++;
             }
             else {
-                EnqueueError(&code[token], eqlbynumerr);
-                return FALSE;                
+                EnqueueError(&code[token], eqlbynumerr);               
             }
         }
         else{
             EnqueueError(&code[token], idfolleqlerr);
-            return FALSE;
         }        
     }
     else {        
-        EnqueueError(&code[token], varidenterr);
-        return FALSE;
+        EnqueueError(&code[token], varidenterr);;
     }
-    
-    
-    return TRUE;
 }
 
 void varDec(int* space){
@@ -118,7 +141,7 @@ void varDec(int* space){
 
 void varHelper(int* space){
     if (eat(identsym)){
-        enter(VAR, code[token-1].val.s, 0, level, (*space)) //check space pointer later
+        enter(VAR, code[token-1].val.s, 0, level, *space); //check space pointer later
         (*space)++;
     }
     else {
@@ -132,12 +155,12 @@ void procedureDec(){
     if(eat(procsym))
     {        
         if (eat(identsym)){
-            name = strncpy(name, code[token-1].val.s, sizeof(name));
+            strncpy(name, code[token-1].val.s, sizeof(name));
             enter(PROC, name, 0, level, 666);
             if (eat(semicolonsym))
             {                
-                proc_addr = block();
-                updateProcAddr(name, proc_addr);
+                block(name);
+                
                 if(!eat(semicolonsym)){
                     EnqueueError(&code[token], misssemierr);
                 }
@@ -173,7 +196,7 @@ void statement(){
             }
             expression();
             if ((i=find(code[mem].val.s)) != -1 && symbol_table[i].kind != PROC){
-                gen(STO, symbol_table[i].level, symbol_table[i].addr);
+                gen(STO, level-symbol_table[i].level, symbol_table[i].addr);
             }
             else {
                 EnqueueError(&code[token-1], cantcallconstvarerr);
@@ -203,7 +226,15 @@ void statement(){
                 EnqueueError(&code[token], thenexperr);
             }
             statement();
-            updateM(mem, address);
+            if (elsesym){
+                mem2 = gen(JMP, 0, 0);
+                updateM(mem, address);
+                statement();
+                updateM(mem2, address);
+            }
+            else{
+                updateM(mem, address);
+            }
             break;
         case whilesym:
             token++;
@@ -225,7 +256,7 @@ void statement(){
             }
             else {
                 if ((i=find(code[token-1].val.s)) != -1 && symbol_table[i].kind != PROC){
-                    gen(STO, symbol_table[i].level, symbol_table[i].addr);
+                    gen(STO, level-symbol_table[i].level, symbol_table[i].addr);
                 }
                 else {
                     EnqueueError(&code[token-1], cantcallconstvarerr);
@@ -246,7 +277,7 @@ void statement(){
             else {                
                 if ((i=find(code[token-1].val.s)) != -1 && symbol_table[i].kind != PROC){
                     if (symbol_table[i].kind == VAR){
-                        gen(LOD, symbol_table[i].level, symbol_table[i].addr);
+                        gen(LOD, level-symbol_table[i].level, symbol_table[i].addr);
                     }
                     else if (symbol_table[i].kind == CONST){
                         gen (LIT, 0, symbol_table[i].val);
@@ -263,6 +294,7 @@ void statement(){
                     token--;
                 }
             }
+            break;
         case callsym:
             token++;
             if (!eat(identsym)){
@@ -270,7 +302,7 @@ void statement(){
             }
             else{
                 if((i=find(code[token-1].val.s)) != -1 && symbol_table[i].kind == PROC){
-                    gen(CAL, symbol_table[i].level, symbol_table[i].addr);
+                    gen(CAL, level-symbol_table[i].level, symbol_table[i].addr);
                 }
                 else {
                     EnqueueError(&code[token-1], idaftercallprocerr);
@@ -331,12 +363,6 @@ int isRelOp(){
 }
 
 void expression(){
-    if(eat(plussym)){
-        
-    }
-    if(eat(minussym)){
-        
-    }
     term();
     while(eat(plussym) || eat(minussym)){
         if (code[token-1].sym == plussym){
@@ -346,8 +372,7 @@ void expression(){
         }
         else if (code[token-1].sym == minussym){
             term();
-            gen(OPR, 0, NEG);
-            address++;
+            gen(OPR, 0, SUB);
         }
     }
 }
@@ -367,11 +392,19 @@ void term(){
 }
 
 void factor(){
+    Boolean isNeg = FALSE;
+    if(eat(minussym)){
+        isNeg = TRUE;
+    }
+    else if(eat(plussym)){
+        isNeg = FALSE;
+    }
+        
     if(eat(identsym)){
         int i;
         if ((i=find(code[token-1].val.s)) != -1){
             if (symbol_table[i].kind == VAR){
-                gen(LOD, symbol_table[i].level, symbol_table[i].addr);
+                gen(LOD, level-symbol_table[i].level, symbol_table[i].addr);
             }
             else if (symbol_table[i].kind == CONST){
                 gen(LIT, 0, symbol_table[i].val);
@@ -383,22 +416,32 @@ void factor(){
         else {
             EnqueueError(&code[token-1], cantcallconstvarerr);
         }
+        if (isNeg){
+            gen(OPR, 0, NEG);
+        }
     }
     else if(eat(numbersym)){
         gen(LIT, 0, code[token-1].val.d);
+        if (isNeg){
+            gen(OPR, 0, NEG);
+        }
     }
     else if(eat(lparentsym)){
         expression();
         if(!eat(rparentsym)){
             EnqueueError(&code[token], missingrparenterr);
         }
+        if (isNeg){
+            gen(OPR, 0, NEG);
+        }
     }
 }
 
-void enter(SymbolType t, char* name, int val, int level, int addr){
+void enter(SymbolType t, char* name, int val, int l, int addr){
     symbol_table[numSymbols].kind = t;
     strncpy(symbol_table[numSymbols].name, name, sizeof(name));
     symbol_table[numSymbols].val = val;
+    symbol_table[numSymbols].level = l;
     symbol_table[numSymbols].addr = addr;
     numSymbols++;
 }
@@ -428,5 +471,19 @@ int gen(Instruction i, int l, int m){
     newCode[address].m = m;
     address++;
     return address-1;
+}
+
+void testParser(){
+    for (int i = 0; i < address; i++){
+        printf("%d:\t%d %d %d\n", i, newCode[i].i, newCode[i].l, newCode[i].m);
+    }
+}
+
+void testSymbolTable(){
+    printf("\n%12s %5s %c %c\n", "Name", "Value", 'L', 'A');
+    for (int i = 0; i < numSymbols; i++){
+        printf("%12s %5d %d %d\n", symbol_table[i].name, symbol_table[i].val, 
+                symbol_table[i].level, symbol_table[i].addr);
+    }
 }
 

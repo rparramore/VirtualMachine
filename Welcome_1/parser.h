@@ -35,11 +35,13 @@ extern int address;
 Boolean parse();
 Boolean eat(Type sym);
 void program();
-int block();
+void blockI();
+void block(char* name);
 void constDec();
 void constHelper();
 void varDec(int* space);
-Boolean varHelper(int* space);
+void varHelper(int* space);
+void procedureDec();
 void statement();
 void condition();
 int isRelOp();
@@ -51,5 +53,7 @@ int find(char* ident);
 void updateProcAddr(char* ident, int proc_addr);
 int updateM(int addr, int m);
 int gen(Instruction i, int l, int m);
+void testParser();
+void testSymbolTable();
 
 #endif

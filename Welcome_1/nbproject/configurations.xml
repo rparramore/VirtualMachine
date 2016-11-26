@@ -11,6 +11,8 @@
                    displayName="Resource Files"
                    projectFiles="true">
       <itemPath>input.pl0</itemPath>
+      <itemPath>nested.pl0</itemPath>
+      <itemPath>rec.pl0</itemPath>
       <itemPath>reservedWords.txt</itemPath>
       <itemPath>tokens.txt</itemPath>
       <itemPath>tokentypes.txt</itemPath>
@@ -47,9 +49,13 @@
       </item>
       <item path="lex.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="nested.pl0" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="parser.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="parser.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="rec.pl0" ex="false" tool="3" flavor2="0">
       </item>
       <item path="reservedWords.txt" ex="false" tool="3" flavor2="0">
       </item>
@@ -88,9 +94,13 @@
       </item>
       <item path="lex.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="nested.pl0" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="parser.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="parser.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="rec.pl0" ex="false" tool="3" flavor2="0">
       </item>
       <item path="reservedWords.txt" ex="false" tool="3" flavor2="0">
       </item>

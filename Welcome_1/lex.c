@@ -445,6 +445,7 @@ void testWord(Word word){
 
 void EnqueueError(Word* w, ErrorType e){
     struct Error* temp = (struct Error*)malloc(sizeof(struct Error));
+    //printf("here!\n");
     temp->error = w;
     temp->type = e;
     temp->next = NULL;

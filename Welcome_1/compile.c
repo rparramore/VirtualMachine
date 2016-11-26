@@ -12,7 +12,10 @@ int main(int argc, char* argv[]){
     
     if(parse()){
         printf("No errors, program is syntactically correct");
-        printFile(getName(argv[1]));
+        if (argc < 3)
+            printFile(getName(argv[1]));
+        else
+            printFile(argv[2]);
     }
     else{
         PrintErrors(argv[1]);

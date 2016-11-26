@@ -1,5 +1,22 @@
-var x;
+var n, cur, prev;
+procedure fib;
+	var temp;
+	begin
+		if n <> 1 then
+		begin
+			temp := cur;
+			cur := prev + temp;
+			prev := temp;
+			n := n - 1;
+			call fib;
+		end;	
+	end;
 begin
-  x := 99;
-  x := x + 77;
+	cur := 1;
+	prev := 0;
+	read n;
+	call fib;
+	write cur;
 end.
+	
+	

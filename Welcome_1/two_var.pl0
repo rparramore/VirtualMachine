@@ -1,7 +1,0 @@
-var a, b;
-begin
-  a := 88;
-  b := 99;
-  write a;
-  write b;
-end .

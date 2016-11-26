@@ -19,6 +19,8 @@ struct Instruction {
     int  m;   // M
 };
 
+int inpFile = 0;
+
 void chooseOp(struct Instruction instruct, int* sp, int* bp, int* pc, int* stack, FILE* input);
 
 void LIT(struct Instruction instruct, int* sp, int* stack);
@@ -50,12 +52,17 @@ int main(int argc, char** argv){
     int bp;
     int pc;
     int stack[MAX_STACK_HEIGHT];// the stack used in the program
-
+    
+    for (int i = 0; i < MAX_STACK_HEIGHT; i++){
+        stack[i] = 0;
+    }
+    
     sp = 0;
     bp = 1;
     pc = 0;
     fp = fopen(argv[1], "r");
     if (argc == 3){
+        inpFile = 1;
         input = fopen(argv[2], "r");
     }    
     
@@ -74,6 +81,8 @@ int main(int argc, char** argv){
         printf("\n");
         if (code[i].op == 9 && code[i].l == 0 && code[i].m == 2)
                 break;
+        if (sp == 0 && bp == 0 && pc == 0)
+            break;
         i++;
     }
 
@@ -101,6 +110,8 @@ int main(int argc, char** argv){
             printMachineState(&sp, &bp, &pc, stack);
             break;
         }
+        if (sp == 0 && bp == 0 && pc == 0)
+            break;
         printMachineState(&sp, &bp, &pc, stack);
     }
 }
@@ -262,7 +273,10 @@ void SIO(struct Instruction instruct, int* sp, int* stack, FILE* input){
             break;
         case 1:
             *sp = *sp + 1;
-            fscanf(input, "%d", &stack[*sp]);
+            if (inpFile == 1)
+                fscanf(input, "%d", &stack[*sp]);
+            else
+                scanf("%d", &stack[*sp]);
             printf("\nRead in %5d%4s", stack[*sp],"");
             break;
         case 2:
@@ -403,6 +417,7 @@ void printSIO(struct Instruction line){
 
 void printMachineState(int* sp, int* bp, int* pc, int* stack){
     printf("%6d%5d%5d   ", *pc, *bp, *sp);
+    //char* c;
     
     int i;
     
@@ -413,4 +428,5 @@ void printMachineState(int* sp, int* bp, int* pc, int* stack){
         printf("%d ", stack[i]);
     }
     printf("\n");
+    //scanf("%s", c);
 }
